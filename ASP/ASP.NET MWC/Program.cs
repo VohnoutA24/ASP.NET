@@ -14,6 +14,12 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// Map /pricing.html to the MVC action directly so the URL works as-is
+app.MapControllerRoute(
+    name: "pricing",
+    pattern: "pricing.html",
+    defaults: new { controller = "Home", action = "Pricing" });
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(
