@@ -20,6 +20,12 @@ app.MapControllerRoute(
     pattern: "pricing.html",
     defaults: new { controller = "Home", action = "Pricing" });
 
+// Map /bomb.html to the MVC action
+app.MapControllerRoute(
+    name: "bomb",
+    pattern: "bomb.html",
+    defaults: new { controller = "Home", action = "Bomb" });
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(
