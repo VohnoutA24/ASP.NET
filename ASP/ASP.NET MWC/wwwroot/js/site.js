@@ -164,3 +164,17 @@
     setTimeout(sampleBackgroundColor, 200);
   }
 })();
+
+// =============================================
+// 4. Auto back button on .user-page
+// =============================================
+(function () {
+  var page = document.querySelector('.user-page');
+  if (!page) return;
+
+  var back = document.createElement('a');
+  back.href = '/';
+  back.className = 'user-page-back';
+  back.textContent = '← Zpět';
+  page.insertBefore(back, page.firstChild);
+})();

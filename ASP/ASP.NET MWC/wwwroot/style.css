@@ -594,3 +594,17 @@ body.fancy-ui .fancy-toggle__label {
   padding: 8px;
   filter: brightness(0) invert(0.8);
 }
+
+/* Back link on user pages */
+.user-page-back {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: #667;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s ease;
+}
+
+.user-page-back:hover {
+  color: #eee;
+}

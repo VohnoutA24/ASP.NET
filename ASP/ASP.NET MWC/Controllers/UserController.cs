@@ -35,11 +35,25 @@ namespace ASP.NET_MWC.Controllers
             HttpContext.Session.SetString("Prihlasen", "true");
             HttpContext.Session.SetString("UserJmeno", "Jan Novák");
             HttpContext.Session.SetString("UserEmail", email);
+            if (!string.IsNullOrEmpty(heslo)) HttpContext.Session.SetString("UserHeslo", heslo);
             return RedirectToAction("Profil");
         }
 
         // GET: /User/Profil
+        [HttpGet]
         public IActionResult Profil()
+        {
+            return ProfilDetailLogic(null);
+        }
+
+        // POST: /User/Profil
+        [HttpPost]
+        public IActionResult Profil(string hesloProOdhaleni)
+        {
+            return ProfilDetailLogic(hesloProOdhaleni);
+        }
+
+        private IActionResult ProfilDetailLogic(string hesloProOdhaleni)
         {
             // Kontrola přihlášení
             if (HttpContext.Session.GetString("Prihlasen") != "true")
@@ -48,7 +62,69 @@ namespace ASP.NET_MWC.Controllers
             }
 
             ViewBag.Jmeno = HttpContext.Session.GetString("UserJmeno");
-            ViewBag.Email = HttpContext.Session.GetString("UserEmail");
+            string originalEmail = HttpContext.Session.GetString("UserEmail") ?? "";
+
+            // Odhalení e-mailu pomocí hesla
+            if (!string.IsNullOrEmpty(hesloProOdhaleni))
+            {
+                if (hesloProOdhaleni == HttpContext.Session.GetString("UserHeslo"))
+                {
+                    ViewBag.Email = originalEmail;
+                    ViewBag.Odhaleno = true;
+                    return View();
+                }
+                else
+                {
+                    ViewBag.ChybaHesla = "Nesprávné heslo! Údaje zůstávají skryty.";
+                }
+            }
+
+            // Maskování e-mailu (jak před @ tak i po @)
+            string maskedEmail = originalEmail;
+            int atIndex = originalEmail.IndexOf('@');
+            if (atIndex > 1)
+            {
+                string namePart = originalEmail.Substring(0, atIndex);
+                string domainPart = originalEmail.Substring(atIndex + 1); // bez @
+                
+                // Mask name
+                if (namePart.Length <= 2)
+                    namePart = new string('*', namePart.Length);
+                else
+                    namePart = namePart[0] + "***" + namePart[namePart.Length - 1];
+
+                // Mask domain
+                int dotIndex = domainPart.LastIndexOf('.');
+                if (dotIndex > 0)
+                {
+                    string domainName = domainPart.Substring(0, dotIndex);
+                    string extension = domainPart.Substring(dotIndex);
+                    
+                    if (domainName.Length <= 2)
+                        domainName = new string('*', domainName.Length);
+                    else
+                        domainName = domainName[0] + "***" + domainName[domainName.Length - 1];
+                        
+                    domainPart = domainName + extension;
+                }
+                else
+                {
+                    domainPart = "***";
+                }
+
+                maskedEmail = namePart + "@" + domainPart;
+            }
+            else if (atIndex == 1)
+            {
+                maskedEmail = "*@" + originalEmail.Substring(atIndex + 1);
+            }
+            else if (originalEmail.Length > 2)
+            {
+                maskedEmail = "***" + originalEmail.Substring(originalEmail.Length - 2);
+            }
+
+            ViewBag.Email = maskedEmail;
+            ViewBag.Odhaleno = false;
             return View();
         }
 
