@@ -30,12 +30,12 @@ namespace ASP.NET_MWC.Controllers
         [HttpPost]
         public IActionResult Login(string email, string heslo)
         {
+            // heslo arrives already SHA-256 hashed from the client
             // Tady by normálně bylo ověření proti databázi
-            // Pro teď jen uložíme do session že je přihlášen
             HttpContext.Session.SetString("Prihlasen", "true");
             HttpContext.Session.SetString("UserJmeno", "Jan Novák");
             HttpContext.Session.SetString("UserEmail", email);
-            if (!string.IsNullOrEmpty(heslo)) HttpContext.Session.SetString("UserHeslo", heslo);
+            if (!string.IsNullOrEmpty(heslo)) HttpContext.Session.SetString("UserHesloHash", heslo);
             return RedirectToAction("Profil");
         }
 
@@ -64,10 +64,10 @@ namespace ASP.NET_MWC.Controllers
             ViewBag.Jmeno = HttpContext.Session.GetString("UserJmeno");
             string originalEmail = HttpContext.Session.GetString("UserEmail") ?? "";
 
-            // Odhalení e-mailu pomocí hesla
+            // Odhalení e-mailu pomocí hesla (hesloProOdhaleni arrives SHA-256 hashed)
             if (!string.IsNullOrEmpty(hesloProOdhaleni))
             {
-                if (hesloProOdhaleni == HttpContext.Session.GetString("UserHeslo"))
+                if (hesloProOdhaleni == HttpContext.Session.GetString("UserHesloHash"))
                 {
                     ViewBag.Email = originalEmail;
                     ViewBag.Odhaleno = true;

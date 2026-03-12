@@ -11,7 +11,7 @@
         <div class="zprava">@TempData["Zprava"]</div>
     }
 
-    <form method="post" asp-controller="User" asp-action="Login">
+    <form method="post" asp-controller="User" asp-action="Login" id="loginForm">
         <div class="form-group">
             <label for="email">E-mail</label>
             <input type="email" id="email" name="email" placeholder="vas@email.cz" required />
@@ -19,11 +19,28 @@
 
         <div class="form-group">
             <label for="heslo">Heslo</label>
-            <input type="password" id="heslo" name="heslo" placeholder="Zadejte heslo" required />
+            <input type="password" id="hesloInput" placeholder="Zadejte heslo" required />
         </div>
 
+        <input type="hidden" id="heslo" name="heslo" />
         <button type="submit">Přihlásit se</button>
     </form>
+
+@section Scripts {
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const raw = document.getElementById('hesloInput').value;
+            const encoded = new TextEncoder().encode(raw);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            document.getElementById('heslo').value = hashHex;
+            document.getElementById('hesloInput').value = '';
+            this.submit();
+        });
+    </script>
+}
 
     <p class="link">Nemáte účet? <a href="/User/Register">Zaregistrujte se</a></p>
 </div>

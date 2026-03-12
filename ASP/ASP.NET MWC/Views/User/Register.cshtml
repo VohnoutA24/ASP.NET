@@ -6,7 +6,7 @@
     <h1>Registrace</h1>
     <p>Vytvořte si nový účet.</p>
 
-    <form method="post" asp-controller="User" asp-action="Register">
+    <form method="post" asp-controller="User" asp-action="Register" id="registerForm">
         <div class="form-group">
             <label for="jmeno">Jméno</label>
             <input type="text" id="jmeno" name="jmeno" placeholder="Zadejte své jméno" required />
@@ -19,11 +19,28 @@
 
         <div class="form-group">
             <label for="heslo">Heslo</label>
-            <input type="password" id="heslo" name="heslo" placeholder="Zadejte heslo" required />
+            <input type="password" id="hesloInput" placeholder="Zadejte heslo" required />
         </div>
 
+        <input type="hidden" id="heslo" name="heslo" />
         <button type="submit">Zaregistrovat se</button>
     </form>
+
+@section Scripts {
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const raw = document.getElementById('hesloInput').value;
+            const encoded = new TextEncoder().encode(raw);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            document.getElementById('heslo').value = hashHex;
+            document.getElementById('hesloInput').value = '';
+            this.submit();
+        });
+    </script>
+}
 
     <p class="link">Už máte účet? <a href="/User/Login">Přihlaste se</a></p>
 </div>
