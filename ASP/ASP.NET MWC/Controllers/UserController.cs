@@ -45,10 +45,17 @@ namespace ASP.NET_MWC.Controllers
                 return View();
             }
 
-            // heslo arrives already SHA-256 hashed from the client
+            // Check existence
+            if (!_store.Exists(username))
+            {
+                ViewBag.Chyba = "Tento uživatel neexistuje.";
+                return View();
+            }
+
+            // Check password
             if (!_store.Validate(username, heslo))
             {
-                ViewBag.Chyba = "Nesprávné uživatelské jméno nebo heslo.";
+                ViewBag.Chyba = "Nesprávné heslo.";
                 return View();
             }
 
