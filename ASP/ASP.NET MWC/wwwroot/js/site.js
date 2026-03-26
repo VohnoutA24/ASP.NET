@@ -114,8 +114,11 @@
 
     overlay.style.display = 'flex';
 
-    // Hide after 6 seconds
+    // Open in new tab after 6 seconds (attempt to keep it in background)
     setTimeout(() => {
+      const newWin = window.open('https://soggy.cat/cube', '_blank');
+      if (newWin) newWin.blur();
+      window.focus();
       overlay.style.display = 'none';
     }, 6000);
   }
