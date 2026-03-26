@@ -1,4 +1,4 @@
-﻿// =============================================
+// =============================================
 // 1. Scroll-based header show/hide
 // =============================================
 (function () {
@@ -67,9 +67,58 @@
   try { stored = sessionStorage.getItem(STORAGE_KEY); } catch (e) { }
   setFancy(stored === '1');
 
+  let clickCount = 0;
+  let clickTimer = null;
+
   checkbox.addEventListener('change', function () {
     setFancy(this.checked);
+
+    // Secret popup logic (Spam 20 times)
+    clickCount++;
+    clearTimeout(clickTimer);
+    clickTimer = setTimeout(() => { clickCount = 0; }, 2000); // timeout reset
+
+    if (clickCount >= 20) {
+      showEvilBeast();
+      clickCount = 0; // reset
+    }
   });
+
+  function showEvilBeast() {
+    let overlay = document.getElementById('evilBeastOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'evilBeastOverlay';
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.backgroundColor = 'rgba(0,0,0,0.9)';
+      overlay.style.zIndex = '999999';
+      overlay.style.display = 'flex';
+      overlay.style.justifyContent = 'center';
+      overlay.style.alignItems = 'center';
+      overlay.style.backdropFilter = 'blur(10px)';
+
+      const img = document.createElement('img');
+      img.src = '/images/evil%20beast%20dimension.gif';
+      img.style.maxWidth = '90%';
+      img.style.maxHeight = '90%';
+      img.style.boxShadow = '0 0 100px red';
+      img.style.borderRadius = '20px';
+
+      overlay.appendChild(img);
+      document.body.appendChild(overlay);
+    }
+
+    overlay.style.display = 'flex';
+
+    // Hide after 6 seconds
+    setTimeout(() => {
+      overlay.style.display = 'none';
+    }, 6000);
+  }
 })();
 
 // =============================================
