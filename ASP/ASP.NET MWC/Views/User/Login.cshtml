@@ -18,13 +18,17 @@
 
     <form method="post" asp-controller="User" asp-action="Login" id="loginForm">
         <div class="form-group">
-            <label for="username">Uživatelské jméno</label>
-            <input type="text" id="username" name="username" placeholder="Vložte jméno" required />
+            <label for="username">Uživatelské jméno <span style="color: #e74c3c;">*</span></label>
+            <input type="text" id="username" name="username" placeholder="Vložte jméno" required 
+                   oninvalid="this.setCustomValidity('Prosím, vyplňte toto pole.')" 
+                   oninput="this.setCustomValidity('')" />
         </div>
 
         <div class="form-group">
-            <label for="heslo">Heslo</label>
-            <input type="password" id="hesloInput" placeholder="Zadejte heslo" required />
+            <label for="heslo">Heslo <span style="color: #e74c3c;">*</span></label>
+            <input type="password" id="hesloInput" placeholder="Zadejte heslo" required 
+                   oninvalid="this.setCustomValidity('Prosím, vyplňte toto pole.')" 
+                   oninput="this.setCustomValidity('')" />
         </div>
 
         <input type="hidden" id="heslo" name="heslo" />
